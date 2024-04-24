@@ -21,7 +21,4 @@ with open("Client/"+namefile, 'wb') as file:
 
     print('Arquivo recebido')
 
-# s.sendall(str.encode('Ja fui e ja voltei!'))
-# data = s.recv(1024)
-
-# print('Mensagem recebida: ', data.decode())     
+ 
