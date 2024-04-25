@@ -1,12 +1,15 @@
 import socket
 
-HOST = '192.168.1.9'
+# HOST = '127.0.0.1'
+HOST = str(input('Digite o IP do servidor>'))
 PORT = 5000
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(('localhost', PORT))
 
-print('Conectado\n')
+
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect((HOST, PORT))
+
+print('Conectado em: {HOST}\n')
 
 namefile = str(input('Buscar arquivo>'))
 

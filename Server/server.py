@@ -1,10 +1,15 @@
 import socket
 
-HOST = '192.168.1.9'
+# HOST = '192.168.1.9'
 PORT = 5000
 
+hostname = socket.gethostname()
+HOST = socket.gethostbyname(hostname)
+print(f"Hostname: {hostname}")
+print(f"IP Address: {HOST}")
+
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(('localhost', PORT))
+server.bind((HOST, PORT))
 server.listen(1)
 
 print ('Esperando o cliente no servidor: ', HOST,'e porta: ', PORT)
@@ -27,3 +32,4 @@ with open("Server/"+namefile, 'rb') as file:
 #         conn.close()
 #         break
 #     conn.sendall(data)
+
