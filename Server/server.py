@@ -8,8 +8,8 @@ print('IP do servidor: ', HOST)
 def receive_file():
     print('Recebendo arquivo...')
     namefile = connection.recv(1024).decode()
-    print(namefile)
-    with open("Server/"+namefile, 'wb') as file:
+    print('Nome do arquivo:', namefile)
+    with open(namefile, 'wb') as file:
         print('Arquivo aberto...')
         while True:
             data = connection.recv(1024)
@@ -20,34 +20,33 @@ def receive_file():
 
 def send_file():
     namefile = connection.recv(1024).decode()
-    with open("Server/"+namefile, 'rb') as file:
-        data = file.read(1024)
-        while data:
-            connection.send(data)
+    with open(namefile, 'rb') as file:
+        while True:
             data = file.read(1024)
+            if not data:
+                break
+            connection.send(data)
         print('Arquivo enviado!')
 
-
-
-# Busca e mostra o IP do servidor
-
-# Cria socket e vincula o endereço e a porta
+# Cria um socket e vincula o endereço e a porta
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST, PORT))
 
 # Escuta a porta
 server.listen(1)
-print ('Esperando o cliente no servidor: ', HOST,'e porta: ', PORT)
-connection, adress = server.accept()
+print('Esperando por conexão na IP: ', HOST, 'e porta: ', PORT)
+connection, address = server.accept()
 
 # Conexão estabelecida
-# Mostra o endereço do cliente
-print ('Conectado em: ', adress)
+print('Conectado a: ', address)
 
-# namefile = connection.recv(1024).decode()
+# Recebe e envia arquivos
+action = connection.recv(1024).decode()
+if action == 'receive':
+    receive_file()
+elif action == 'send':
+    send_file()
 
-# Envia o arquivo
-receive_file()
-send_file()
-
-
+# Fecha a conexão
+connection.close()
+input('Pressione qualquer tecla para sair...')

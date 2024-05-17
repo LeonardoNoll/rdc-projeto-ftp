@@ -1,50 +1,49 @@
 import socket
 
-# Pede para o cliente inserir o IP do servidor
-# HOST = str(input('Digite o IP do servidor>'))
-HOST = '192.168.1.11'
+# Define o endereço IP e a porta do servidor
+# HOST = '192.168.1.11'
+HOST = input('Digite o IP do servidor: ')
 PORT = 5000
 
 def get_file():
-    # Pede para o cliente inserir o nome do arquivo a buscar
-    namefile = str(input('Buscar arquivo>'))
+    connection.send('send'.encode())
+    namefile = input('Digite o nome do arquivo a ser buscado: ')
     connection.send(namefile.encode())
-
-    # Recebe o arquivo
-    with open("Client/"+namefile, 'wb') as file:
-        while 1:
-            data = connection.recv(1000000)
+    with open(namefile, 'wb') as file:
+        while True:
+            data = connection.recv(1024)
             if not data:
                 break
             file.write(data)
-        print('Arquivo recebido')
+        print('Arquivo recebido.')
 
 def send_file():
-    # Pede para o cliente inserir o nome do arquivo a enviar
-    namefile = str(input('Enviar arquivo>'))
+    connection.send('receive'.encode())
+    namefile = input('Digite o nome do arquivo a ser enviado: ')
     connection.send(namefile.encode())
-
-    # Envia o arquivo
-    with open("Client/"+namefile, 'rb') as file:
-        data = file.read(1024)
-        while data:
-            connection.send(data)
+    with open(namefile, 'rb') as file:
+        while True:
             data = file.read(1024)
-        connection.send(b'')
-        print('Arquivo enviado!')
-        
+            if not data:
+                break
+            connection.send(data)
+        print('Arquivo enviado.')
 
-
-
-
-# Cria socket e conecta ao servidor
+# Cria um socket e conecta ao servidor
 connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 connection.connect((HOST, PORT))
 
 # Conexão estabelecida
-print('Conectado em: {HOST}\n')
+print(f'Conectado a: {HOST}\n')
 
-send_file()
-get_file()
+# Envia e recebe arquivos
+action = input('Digite "get" para baixar um arquivo ou "send" para enviar um arquivo: ')
 
- 
+if action == 'get':
+    get_file()
+elif action == 'send':
+    send_file()
+
+# Fecha a conexão
+connection.close()
+input('Pressione qualquer tecla para sair...')
