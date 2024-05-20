@@ -46,4 +46,4 @@ elif action == 'send':
 
 # Fecha a conexão
 connection.close()
-input('Pressione qualquer tecla para sair...')
+# input('Pressione qualquer tecla para sair...')

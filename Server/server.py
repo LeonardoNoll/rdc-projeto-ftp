@@ -20,6 +20,7 @@ def receive_file():
 
 def send_file():
     namefile = connection.recv(1024).decode()
+    print("Server\\" + namefile)
     with open(namefile, 'rb') as file:
         while True:
             data = file.read(1024)
@@ -49,4 +50,4 @@ elif action == 'send':
 
 # Fecha a conexão
 connection.close()
-input('Pressione qualquer tecla para sair...')
+# input('Pressione qualquer tecla para sair...')
