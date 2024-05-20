@@ -23,6 +23,7 @@ def send_file():
     connection.send(namefile.encode())
     with open(namefile, 'rb') as file:
         while True:
+            print('Enviando arquivo...')
             data = file.read(1024)
             if not data:
                 break
