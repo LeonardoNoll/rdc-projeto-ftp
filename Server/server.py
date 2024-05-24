@@ -2,6 +2,25 @@ import socket
 import os
 import shutil
 
+def menu():
+    # Lista arquivos do diretório
+    lista_arquivos = os.listdir(os.getcwd())
+    connection.send(' '.join(lista_arquivos).encode())
+
+    # Recebe e envia arquivos
+    action = connection.recv(1024).decode()
+    if action == 'receive':
+        receive_file()
+    elif action == 'send':
+        send_file()
+    elif action == 'delete_file':
+        delete_file()
+    elif action == 'delete_dir':
+        delete_dir()
+    elif action == 'enter':
+        enter_dir()
+
+
 def receive_file():
     print('Recebendo arquivo...')
     namefile = connection.recv(1024).decode()
@@ -59,22 +78,10 @@ connection, address = server.accept()
 # Conexão estabelecida
 print('Conectado a: ', address)
 
-# Lista arquivos do diretório
-lista_arquivos = os.listdir(os.getcwd())
-connection.send(' '.join(lista_arquivos).encode())
+menu()
 
-# Recebe e envia arquivos
-action = connection.recv(1024).decode()
-if action == 'receive':
-    receive_file()
-elif action == 'send':
-    send_file()
-elif action == 'delete_file':
-    delete_file()
-elif action == 'delete_dir':
-    delete_dir()
-elif action == 'enter':
-    enter_dir()
+
+
 # Fecha a conexão
 connection.close()
 # input('Pressione qualquer tecla para sair...')

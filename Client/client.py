@@ -81,29 +81,9 @@ connection.connect((HOST, PORT))
 # Conexão estabelecida
 print(f'Conectado a: {HOST}\n')
 
-# Lista arquivos do diretório
-print('Diretório do servidor:')
-lista_arquivos = connection.recv(1024).decode().split()
-for arquivo in lista_arquivos:
-    print(">",arquivo)
+menu()
+menu()
 
-# Envia e recebe arquivos
-action = input('\nDigite a opção que você deseja acessar:\n 1 - Receber arquivo\n 2 - Enviar arquivo\n 3 - Excluir arquivo\n 4 - Acessar diretório\n 5 - Excluir diretório\n')
-
-match action:
-    case '1':
-        get_file()
-    case '2':
-        send_file()
-    case '3':
-        delete_file()
-    case '4':
-        enter_dir()
-    case '5':
-        delete_dir()
-    case _:
-        print('Opção inválida.')
-        exit()
 
 # Fecha a conexão
 connection.close()
