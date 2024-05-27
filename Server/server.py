@@ -4,6 +4,8 @@ import shutil
 
 def menu():
     # Lista arquivos do diretório
+    print('Diretório do servidor:' + os.getcwd())
+    connection.send(os.getcwd().encode()) 
     lista_arquivos = os.listdir(os.getcwd())
     connection.send(' '.join(lista_arquivos).encode())
 
@@ -19,7 +21,8 @@ def menu():
         delete_dir()
     elif action == 'enter':
         enter_dir()
-
+    elif action == 'leave':
+        leave_dir()
 
 def receive_file():
     print('Recebendo arquivo...')
@@ -54,11 +57,17 @@ def enter_dir():
     namefile = connection.recv(1024).decode()
     os.chdir(namefile)
     print('Diretório acessado!')
+    menu()
 
 def delete_dir():
     namefile = connection.recv(1024).decode()
     shutil.rmtree(namefile)
     print('Diretório excluído!')
+
+def leave_dir():
+    os.chdir(os.path.normpath(os.getcwd() + os.sep + os.pardir))
+    print('Saindo do diretório!')
+    menu()
 
 # Define o endereço IP e a porta do servidor
 hostname = socket.gethostname()

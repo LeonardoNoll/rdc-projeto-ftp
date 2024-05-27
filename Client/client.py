@@ -2,13 +2,15 @@ import socket
 import os
 
 def menu():
+    diretorio_server = connection.recv(1024).decode()
     print('Diretório do servidor:')
+    print(diretorio_server)
     lista_arquivos = connection.recv(1024).decode().split()
     for arquivo in lista_arquivos:
         print(">",arquivo)
 
     # Envia e recebe arquivos
-    action = input('\nDigite a opção que você deseja acessar:\n 1 - Receber arquivo\n 2 - Enviar arquivo\n 3 - Excluir arquivo\n 4 - Acessar diretório\n 5 - Excluir diretório\n')
+    action = input('\nDigite a opção que você deseja acessar:\n 1 - Receber arquivo\n 2 - Enviar arquivo\n 3 - Excluir arquivo\n 4 - Acessar diretório\n 5 - Excluir diretório\n 6 - Sair do diretório\n')
 
     match action:
         case '1':
@@ -21,6 +23,8 @@ def menu():
             enter_dir()
         case '5':
             delete_dir()
+        case '6':
+            leave_dir()
         case _:
             print('Opção inválida.')
             exit()
@@ -62,12 +66,18 @@ def enter_dir():
     namefile = input('Digite o nome do diretório a ser acessado: ')
     connection.send(namefile.encode())
     print('Diretório acessado.')
+    menu()
 
 def delete_dir():
     connection.send('delete_dir'.encode())
     namefile = input('Digite o nome do diretório a ser excluído: ')
     connection.send(namefile.encode())
     print('Diretório excluído.')
+
+def leave_dir():
+    connection.send('leave'.encode())
+    print('Saindo do diretório.')
+    menu()
 
 # Define o endereço IP e a porta do servidor
 HOST = '192.168.1.11'
@@ -82,8 +92,6 @@ connection.connect((HOST, PORT))
 print(f'Conectado a: {HOST}\n')
 
 menu()
-menu()
-
 
 # Fecha a conexão
 connection.close()
