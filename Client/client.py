@@ -10,7 +10,7 @@ def menu():
         print(">",arquivo)
 
     # Envia e recebe arquivos
-    action = input('\nDigite a opção que você deseja acessar:\n 1 - Receber arquivo\n 2 - Enviar arquivo\n 3 - Excluir arquivo\n 4 - Acessar diretório\n 5 - Excluir diretório\n 6 - Sair do diretório\n')
+    action = input('\nDigite a opção que você deseja acessar:\n 1 - Receber arquivo\n 2 - Enviar arquivo\n 3 - Excluir arquivo\n 4 - Acessar diretório\n 5 - Excluir diretório\n 6 - Sair do diretório\n 7 - Sair\n')
 
     match action:
         case '1':
@@ -25,38 +25,46 @@ def menu():
             delete_dir()
         case '6':
             leave_dir()
+        case '7':
+            exit_program()
         case _:
             print('Opção inválida.')
-            exit()
-
+            connection.send('invalid'.encode())
+            menu()
 
 def get_file():
     connection.send('send'.encode())
     namefile = input('Digite o nome do arquivo a ser buscado: ')
     connection.send(namefile.encode())
-    with open(namefile, 'wb') as file:
-        while True:
-            data = connection.recv(1024)
-            if not data:
-                break
-            file.write(data)
-        print('Arquivo recebido.')
+    if connection.recv(1024).decode() == 'Arquivo encontrado!':
+        with open(namefile, 'wb') as file:
+            while True:
+                data = connection.recv(1024)
+                if not data:
+                    break
+                file.write(data)
+            print('Arquivo recebido.')
+    else:
+        print('Arquivo não encontrado.')
 
 def send_file():
     connection.send('receive'.encode())
     namefile = input('Digite o nome do arquivo a ser enviado: ')
-    connection.send(namefile.encode())
-    with open(namefile, 'rb') as file:
-        while True:
-            # print('Enviando arquivo...')
-            data = file.read(1024)
-            if not data:
-                break
-            connection.send(data)
-        print('Arquivo enviado.')
+    try:
+        with open(namefile, 'rb') as file:
+            connection.send('Arquivo encontrado!'.encode())
+            connection.send(namefile.encode())
+            while True:
+                data = file.read(1024)
+                if not data:
+                    break
+                connection.send(data)
+            print('Arquivo enviado.')
+    except:
+        print('Arquivo não encontrado.')
 
 def delete_file():
-    connection.send('delete'.encode())
+    connection.send('delete_file'.encode())
     namefile = input('Digite o nome do arquivo a ser excluído: ')
     connection.send(namefile.encode())
     print('Arquivo excluído.')
@@ -79,6 +87,11 @@ def leave_dir():
     print('Saindo do diretório.')
     menu()
 
+def exit_program():
+    connection.send('exit_program'.encode())
+    print('Saindo...')
+    connection.close()
+
 # Define o endereço IP e a porta do servidor
 HOST = '192.168.1.11'
 # HOST = input('Digite o IP do servidor: ')
@@ -91,6 +104,7 @@ connection.connect((HOST, PORT))
 # Conexão estabelecida
 print(f'Conectado a: {HOST}\n')
 
+# Navegação no servidor
 menu()
 
 # Fecha a conexão
