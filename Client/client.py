@@ -93,8 +93,8 @@ def exit_program():
     connection.close()
 
 # Define o endereço IP e a porta do servidor
-HOST = '192.168.1.11'
-# HOST = input('Digite o IP do servidor: ')
+# HOST = '192.168.1.11'
+HOST = input('Digite o IP do servidor: ')
 PORT = 5000
 
 # Cria um socket e conecta ao servidor
@@ -109,4 +109,4 @@ menu()
 
 # Fecha a conexão
 connection.close()
-# input('Pressione qualquer tecla para sair...')
+input('Pressione qualquer tecla para sair...')
