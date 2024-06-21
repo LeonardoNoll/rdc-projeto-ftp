@@ -2,40 +2,46 @@ import socket
 import os
 import shutil
 
-def menu():
-    # Lista arquivos do diretório
-    print('Diretório do servidor: ', os.getcwd())
-    connection.send(os.getcwd().encode()) 
-    lista_arquivos = os.listdir(os.getcwd())
-    connection.send(' '.join(lista_arquivos).encode())
-
-    # Recebe e envia arquivos
-    action = connection.recv(1024).decode()
-    match action:
+def receiveClientCommand():
+    command = connection.recv(1024).decode()
+    match command:
         case 'receive':
-            receive_file()
+            receiveFileFromClient()
         case 'send':
-            send_file()
-        case 'delete_file':
-            delete_file()
-        case 'delete_dir':
-            delete_dir()
+            sendFileToClient()
+        case 'deleteFile':
+            deleteFile()
+        case 'deleteDir':
+            deleteDir()
         case 'enter':
-            enter_dir()
+            enterDir()
         case 'leave':
-            leave_dir()
-        case 'exit_program':
-            exit_program()
+            exitDir()
+        case 'closeProgram':
+            closeProgram()
         case 'invalid':
             print('Opção inválida.')
-            menu()
+            showMenu()
 
-def receive_file():
+def sendDirectory():
+    dirPath = os.getcwd()
+    fileList = os.listdir(dirPath)
+
+    connection.send(dirPath.encode()) 
+    connection.send(' '.join(fileList).encode())
+
+    print('Diretório atual:\n', dirPath)
+
+def showMenu():
+    sendDirectory()
+    receiveClientCommand()
+
+def receiveFileFromClient():
     print('Recebendo arquivo...')
     if (connection.recv(1024).decode() == 'Arquivo encontrado!'):
-        namefile = connection.recv(1024).decode()
-        print('Nome do arquivo:', namefile)
-        with open(namefile, 'wb') as file:
+        nameFile = connection.recv(1024).decode()
+        print('Nome do arquivo:', nameFile)
+        with open(nameFile, 'wb') as file:
             print('Arquivo aberto...')
             while True:
                 data = connection.recv(1024)
@@ -44,13 +50,13 @@ def receive_file():
                 file.write(data)
             print('Arquivo recebido!')
     else:
-        print('Arquivo não encontrado!')
+        input('Arquivo não encontrado!')
 
-def send_file():
-    namefile = connection.recv(1024).decode()
-    print(os.getcwd() + "\\" + namefile)
+def sendFileToClient():
+    nameFile = connection.recv(1024).decode()
+    print(os.getcwd() + "\\" + nameFile)
     try:
-        with open(namefile, 'rb') as file:
+        with open(nameFile, 'rb') as file:
             connection.send('Arquivo encontrado!'.encode())
             while True:
                 data = file.read(1024)
@@ -62,53 +68,49 @@ def send_file():
         connection.send('Arquivo não encontrado!'.encode())
         print('Arquivo não encontrado!')
 
-def delete_file():
-    namefile = connection.recv(1024).decode()
-    os.remove(namefile)
+def deleteFile():
+    nameFile = connection.recv(1024).decode()
+    os.remove(nameFile)
     print('Arquivo excluído!') 
 
-def enter_dir():
-    namefile = connection.recv(1024).decode()
-    os.chdir(namefile)
+def enterDir():
+    nameFile = connection.recv(1024).decode()
+    os.chdir(nameFile)
     print('Diretório acessado!')
-    menu()
+    showMenu()
 
-def delete_dir():
-    namefile = connection.recv(1024).decode()
-    shutil.rmtree(namefile)
+def deleteDir():
+    nameFile = connection.recv(1024).decode()
+    shutil.rmtree(nameFile)
     print('Diretório excluído!')
 
-def leave_dir():
+def exitDir():
     os.chdir(os.path.normpath(os.getcwd() + os.sep + os.pardir))
     print('Saindo do diretório!')
-    menu()
+    showMenu()
 
-def exit_program():
+def closeProgram():
     connection.close()
     print('Conexão encerrada.')
     exit()
 
+#               MAIN                #
 # Define o endereço IP e a porta do servidor
-hostname = socket.gethostname()
-HOST = socket.gethostbyname(hostname)
+HOST = socket.gethostbyname(socket.gethostname())
 PORT = 5000
-print('IP do servidor: ', HOST)
 
 # Cria um socket e vincula o endereço e a porta
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST, PORT))
 
 # Escuta a porta
-server.listen(1)
+# print('IP do servidor: ', HOST)
 print('Esperando por conexão na IP:', HOST, 'e porta:', PORT)
+server.listen(1)
 connection, address = server.accept()
 
 # Conexão estabelecida
 print('Conectado a:', address)
-
 # Menu
-menu()
-
-# Fecha a conexão
-connection.close()
+showMenu()
 # input('Pressione qualquer tecla para sair...')
