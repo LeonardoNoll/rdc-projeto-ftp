@@ -28,8 +28,7 @@ def sendDirectory():
     fileList = os.listdir(dirPath)
 
     connection.send(dirPath.encode()) 
-    connection.send(' '.join(fileList).encode())
-
+    connection.send('||'.join(fileList).encode())
     print('Diretório atual:\n', dirPath)
 
 def showMenu():

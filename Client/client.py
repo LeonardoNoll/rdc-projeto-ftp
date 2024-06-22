@@ -2,8 +2,16 @@ import socket
 import os
 
 def getUserCommand():
-    command = input('\nLista de comando:\n send - Enviar arquivo\n receive - Receber arquivo\n delete_file - Excluir arquivo\n enter_dir - Acessar diretório\n delete_dir - Excluir diretório\n exit_dir - Sair do diretório\n close - Sair\n')
-    
+    commandList  = '\nLista de comando:'
+    commandList += '\n  send - Enviar arquivo'
+    commandList += '\n  receive - Receber arquivo'
+    commandList += '\n  delete_file - Excluir arquivo'
+    commandList += '\n  enter_dir - Acessar diretório'
+    commandList += '\n  delete_dir - Excluir diretório'
+    commandList += '\n  exit_dir - Sair do diretório'
+    commandList += '\n  close - Sair\n'
+    command = input(commandList)
+
     match command:
         case 'receive':
             requestFileFromServer()
@@ -25,7 +33,7 @@ def getUserCommand():
 
 def receiveAndShowServerDir():
     serverDir = connection.recv(1024).decode()
-    serverFileList = connection.recv(1024).decode().split()
+    serverFileList = connection.recv(1024).decode().split('||')
     print('Diretório do servidor:\n', serverDir)
     if(len(serverFileList) == 0):
         print('Diretório vazio.')
@@ -55,6 +63,11 @@ def requestFileFromServer():
 
 def sendFileToServer():
     connection.send('receive'.encode())
+    clientDir = os.getcwd()
+    fileList = os.listdir(clientDir)
+    print('Diretório Cliente:\n', clientDir)
+    for file in fileList:
+        print(">",file)
     namefile = input('Digite o nome do arquivo a ser enviado: ')
     try:
         with open(namefile, 'rb') as file:
@@ -103,6 +116,7 @@ def closeProgram():
 HOST = input('Digite o IP do servidor: ')
 PORT = 5000
 
+
 # Cria um socket e conecta ao servidor
 connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 connection.connect((HOST, PORT))
@@ -115,4 +129,4 @@ showMenu()
 
 # Fecha a conexão
 connection.close()
-input('Pressione qualquer tecla para sair...')
+# input('Pressione qualquer tecla para sair...')
