@@ -95,7 +95,15 @@ def closeProgram():
 
 #               MAIN                #
 # Define o endereço IP e a porta do servidor
-HOST = socket.gethostbyname(socket.gethostname())
+match input('Deseja usar o IP padrão? (s/n)'):
+    case 's':
+        HOST = socket.gethostbyname(socket.gethostname())
+    case 'n':
+        HOST = input('Digite o IP do servidor: ')
+    case _:
+        print('Opção inválida. Usando IP padrão.')
+        HOST = socket.gethostbyname(socket.gethostname())
+
 PORT = 5000
 
 # Cria um socket e vincula o endereço e a porta

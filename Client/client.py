@@ -111,6 +111,7 @@ def closeProgram():
     print('Saindo...')
     connection.close()
 
+
 # Define o endereço IP e a porta do servidor
 # HOST = '192.168.1.11'
 HOST = input('Digite o IP do servidor: ')
