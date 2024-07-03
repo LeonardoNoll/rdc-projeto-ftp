@@ -33,8 +33,12 @@ def getUserCommand():
 
 def receiveAndShowServerDir():
     serverDir = connection.recv(1024).decode()
-    serverFileList = connection.recv(1024).decode().split('||')
+    # print('recebido: ' + serverDir)
+    serverFileList = connection.recv(1024).decode()
+    # print('recebido: ' + serverFileList)
+    serverFileList = serverFileList.split('()')
     print('Diretório do servidor:\n', serverDir)
+    # print('Arquivos no diretório:', serverFileList)
     if(len(serverFileList) == 0):
         print('Diretório vazio.')
     else:
@@ -115,7 +119,7 @@ def closeProgram():
 # Define o endereço IP e a porta do servidor
 # HOST = '192.168.1.11'
 HOST = input('Digite o IP do servidor: ')
-PORT = 5000
+PORT = 5444
 
 
 # Cria um socket e conecta ao servidor

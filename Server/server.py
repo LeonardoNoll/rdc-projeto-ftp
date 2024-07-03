@@ -25,11 +25,13 @@ def receiveClientCommand():
 
 def sendDirectory():
     dirPath = os.getcwd()
-    fileList = os.listdir(dirPath)
+    fileList = '()'.join(os.listdir(dirPath))
 
     connection.send(dirPath.encode()) 
-    connection.send('||'.join(fileList).encode())
     print('Diretório atual:\n', dirPath)
+    # connection.send('()'.join(fileList).encode())
+    connection.send(fileList.encode())
+    print('Arquivos no diretório:', fileList)
 
 def showMenu():
     sendDirectory()
@@ -104,7 +106,7 @@ match input('Deseja usar o IP padrão? (s/n)'):
         print('Opção inválida. Usando IP padrão.')
         HOST = socket.gethostbyname(socket.gethostname())
 
-PORT = 5000
+PORT = 5444
 
 # Cria um socket e vincula o endereço e a porta
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
