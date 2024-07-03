@@ -26,10 +26,11 @@ def receiveClientCommand():
 def sendDirectory():
     dirPath = os.getcwd()
     fileList = '()'.join(os.listdir(dirPath))
+    if len(fileList) == 0:
+        fileList = 'Diretório vazio.'
 
     connection.send(dirPath.encode()) 
     print('Diretório atual:\n', dirPath)
-    # connection.send('()'.join(fileList).encode())
     connection.send(fileList.encode())
     print('Arquivos no diretório:', fileList)
 

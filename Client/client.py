@@ -2,7 +2,7 @@ import socket
 import os
 
 def getUserCommand():
-    commandList  = '\nLista de comando:'
+    commandList  = '\n\nLista de comandos:'
     commandList += '\n  send - Enviar arquivo'
     commandList += '\n  receive - Receber arquivo'
     commandList += '\n  delete_file - Excluir arquivo'
@@ -39,7 +39,7 @@ def receiveAndShowServerDir():
     serverFileList = serverFileList.split('()')
     print('Diretório do servidor:\n', serverDir)
     # print('Arquivos no diretório:', serverFileList)
-    if(len(serverFileList) == 0):
+    if serverFileList == 'Diretório vazio.':
         print('Diretório vazio.')
     else:
         for arquivo in serverFileList:
